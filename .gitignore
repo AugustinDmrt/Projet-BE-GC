@@ -1,0 +1,34 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+
+# Vite
+.vite/
+
+# Logs
+*.log
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Mac system files
+.DS_Store
+
+# Linux system files
+*.swp
+
+# Windows system files
+Thumbs.db

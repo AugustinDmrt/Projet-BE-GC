@@ -1,0 +1,72 @@
+.calendar-cell {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 50px; /* Just to give some height for empty cells */
+}
+
+.ticket {
+  background-color: yellow;
+  padding: 5px;
+  margin: 2px 0;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.week-header {
+  display: contents; /* Ensure headers are part of the grid layout */
+}
+
+.day-header {
+  background-color: lightblue;
+  font-weight: bold;
+  text-align: center;
+}
+
+.week-content {
+  display: contents; /* Ensure cells are part of the grid layout */
+}
+
+.person-calendar {
+  margin-bottom: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 20px;
+  text-align: left;
+}
+
+h3 {
+  text-align: left;
+  margin: 10px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.calendar-cell {
+  position: relative;
+  height: 100px; /* Ajuste selon tes besoins */
+}
+
+.ticket {
+  background-color: yellow;
+  margin: 2px;
+  padding: 4px;
+  cursor: pointer;
+}
