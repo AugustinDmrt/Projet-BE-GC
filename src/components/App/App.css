@@ -1,0 +1,83 @@
+.App {
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.calendars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.calendar-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.calendar-name {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.calendar {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.calendar-day {
+  min-width: 150px;
+  height: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-right: 5px;
+  overflow-y: auto;
+}
+
+.day-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.people-manager,
+.ticket-manager {
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+input,
+select,
+button {
+  padding: 5px;
+}
+
+.ticket {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin-bottom: 5px;
+  cursor: move;
+}
+
+.load-more {
+  position: sticky;
+  right: 0;
+  margin-left: 10px;
+}
+
+.header-section {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
