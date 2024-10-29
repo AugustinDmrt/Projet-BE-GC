@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function TicketManager({ people, tickets, addTicket, deleteTicket }) {
+export default function TicketManager({
+  people,
+  tickets,
+  addTicket,
+  deleteTicket,
+}) {
   const [newTicket, setNewTicket] = useState({
     personId: "",
     date: "",
@@ -57,5 +62,3 @@ function TicketManager({ people, tickets, addTicket, deleteTicket }) {
     </div>
   );
 }
-
-export default TicketManager;

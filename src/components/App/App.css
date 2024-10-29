@@ -10,11 +10,14 @@
   flex-direction: column;
   gap: 20px;
   overflow-x: auto;
+  padding-bottom: 15px;
 }
 
 .calendar-container {
   display: flex;
   align-items: flex-start;
+  position: relative;
+  min-width: fit-content;
 }
 
 .calendar-name {
@@ -23,12 +26,20 @@
   transform: rotate(180deg);
   padding: 10px;
   font-weight: bold;
-  white-space: nowrap;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: white;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #e5e5e5;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .calendar {
   display: flex;
-  margin-bottom: 20px;
+  margin-left: 10px;
 }
 
 .calendar-day {
@@ -38,11 +49,24 @@
   border: 1px solid #ccc;
   margin-right: 5px;
   overflow-y: auto;
+  background: white;
+  transition: background-color 0.2s, border 0.2s;
+}
+
+.calendar-day.drag-over {
+  background-color: #f0f8ff;
+  border: 2px dashed #4a90e2;
 }
 
 .day-header {
   font-weight: bold;
   margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+  z-index: 1;
 }
 
 .people-manager,
@@ -57,27 +81,58 @@ form {
 }
 
 input,
-select,
+select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 button {
-  padding: 5px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .ticket {
   background-color: #f0f0f0;
   border: 1px solid #ddd;
-  padding: 5px;
-  margin-bottom: 5px;
+  padding: 8px;
+  margin-bottom: 8px;
   cursor: move;
+  border-radius: 4px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.ticket:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ticket.dragging {
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.9;
+  transform: scale(1.02);
 }
 
 .load-more {
   position: sticky;
   right: 0;
   margin-left: 10px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.header-section {
-  display: flex;
-  flex-direction: row;
-  gap: 30px;
+.load-more:hover {
+  background-color: #357abd;
+}
+
+.calendars-wrapper {
+  overflow-x: auto;
+  width: 100%;
 }

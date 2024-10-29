@@ -5,7 +5,7 @@ import PeopleManager from "../PeopleManager/PeopleManager";
 import TicketManager from "../TicketManager/TicketManager";
 import "./App.css";
 
-function App() {
+export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
@@ -28,13 +28,29 @@ function App() {
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const newTickets = Array.from(tickets);
-    const [reorderedTicket] = newTickets.splice(result.source.index, 1);
-    reorderedTicket.date = result.destination.droppableId.split("-")[1];
-    reorderedTicket.personId = result.destination.droppableId.split("-")[0];
-    newTickets.splice(result.destination.index, 0, reorderedTicket);
+    const { source, destination, draggableId } = result;
 
-    setTickets(newTickets);
+    if (source.droppableId === destination.droppableId) {
+      return;
+    }
+
+    const [destPersonId, destDate] = destination.droppableId.split("-");
+    const ticketToMove = tickets.find((t) => t.id === draggableId);
+
+    if (!ticketToMove) return;
+
+    const updatedTickets = tickets.map((ticket) => {
+      if (ticket.id === draggableId) {
+        return {
+          ...ticket,
+          personId: destPersonId,
+          date: destDate,
+        };
+      }
+      return ticket;
+    });
+
+    setTickets(updatedTickets);
   };
 
   const loadMoreDays = () => {
@@ -47,36 +63,33 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Calendrier Ticket BE</h1>
-      <div className="header-section">
-        <PeopleManager people={people} addPerson={addPerson} />
-        <TicketManager
-          people={people}
-          tickets={tickets}
-          addTicket={addTicket}
-          deleteTicket={deleteTicket}
-        />
+      <h1>Calendar Ticket Manager</h1>
+      <PeopleManager people={people} addPerson={addPerson} />
+      <TicketManager
+        people={people}
+        tickets={tickets}
+        addTicket={addTicket}
+        deleteTicket={deleteTicket}
+      />
+      <div className="calendars-wrapper">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="calendars-container">
+            {people.map((person) => (
+              <Calendar
+                key={person.id}
+                person={person}
+                tickets={tickets.filter((t) => t.personId === person.id)}
+                startDate={startDate}
+              />
+            ))}
+            {people.length > 0 && (
+              <button onClick={loadMoreDays} className="load-more">
+                Load More
+              </button>
+            )}
+          </div>
+        </DragDropContext>
       </div>
-
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="calendars-container">
-          {people.map((person) => (
-            <Calendar
-              key={person.id}
-              person={person}
-              tickets={tickets.filter((t) => t.personId === person.id)}
-              startDate={startDate}
-            />
-          ))}
-          {people.length > 0 && (
-            <button onClick={loadMoreDays} className="load-more">
-              Load More
-            </button>
-          )}
-        </div>
-      </DragDropContext>
     </div>
   );
 }
-
-export default App;
