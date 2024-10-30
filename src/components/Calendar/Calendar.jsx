@@ -1,8 +1,9 @@
 import { addDays, eachDayOfInterval, format, isWeekend } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { useEffect, useState } from "react";
+import { useDrop } from "react-dnd";
+import Ticket from "../Ticket/Ticket";
 
-export default function Calendar({ person, tickets, startDate }) {
+export default function Calendar({ person, tickets, startDate, moveTicket }) {
   const [days, setDays] = useState([]);
 
   useEffect(() => {
@@ -15,57 +16,36 @@ export default function Calendar({ person, tickets, startDate }) {
     setDays(generateDays(startDate));
   }, [startDate]);
 
+  const CalendarDay = ({ day, dayTickets }) => {
+    const [{ isOver }, drop] = useDrop(() => ({
+      accept: "ticket",
+      drop: (item) => {
+        moveTicket(item.id, person.id, format(day, "yyyy-MM-dd"));
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }));
+
+    return (
+      <div ref={drop} className={`calendar-day ${isOver ? "drag-over" : ""}`}>
+        <div className="day-header">{format(day, "EEE dd")}</div>
+        {dayTickets.map((ticket) => (
+          <Ticket key={ticket.id} ticket={ticket} />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="calendar-container">
       <div className="calendar-name">{person.name}</div>
       <div className="calendar">
         {days.map((day) => {
           const dayStr = format(day, "yyyy-MM-dd");
-          const droppableId = `${person.id}-${dayStr}`;
           const dayTickets = tickets.filter((ticket) => ticket.date === dayStr);
 
-          return (
-            <Droppable
-              key={droppableId}
-              droppableId={droppableId}
-              type="TICKET"
-            >
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`calendar-day ${
-                    snapshot.isDraggingOver ? "drag-over" : ""
-                  }`}
-                >
-                  <div className="day-header">{format(day, "EEE dd")}</div>
-                  {dayTickets.map((ticket, index) => (
-                    <Draggable
-                      key={ticket.id}
-                      draggableId={ticket.id}
-                      index={index}
-                      type="TICKET"
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={`ticket ${
-                            snapshot.isDragging ? "dragging" : ""
-                          }`}
-                          style={provided.draggableProps.style}
-                        >
-                          {ticket.description}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          );
+          return <CalendarDay key={dayStr} day={day} dayTickets={dayTickets} />;
         })}
       </div>
     </div>

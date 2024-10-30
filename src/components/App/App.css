@@ -3,14 +3,23 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendars-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
+  position: relative;
+}
+
+.calendars-wrapper {
+  width: 100%;
   overflow-x: auto;
-  padding-bottom: 15px;
+  position: relative;
 }
 
 .calendar-container {
@@ -18,6 +27,7 @@
   align-items: flex-start;
   position: relative;
   min-width: fit-content;
+  margin-bottom: 20px;
 }
 
 .calendar-name {
@@ -40,17 +50,19 @@
 .calendar {
   display: flex;
   margin-left: 10px;
+  height: 200px;
 }
 
 .calendar-day {
   min-width: 150px;
-  height: 200px;
+  height: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   margin-right: 5px;
-  overflow-y: auto;
   background: white;
   transition: background-color 0.2s, border 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar-day.drag-over {
@@ -61,12 +73,28 @@
 .day-header {
   font-weight: bold;
   margin-bottom: 10px;
-  position: sticky;
-  top: 0;
   background: white;
   padding: 5px 0;
   border-bottom: 1px solid #eee;
-  z-index: 1;
+}
+
+.day-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.day-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.day-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.day-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 2px;
 }
 
 .people-manager,
@@ -130,9 +158,4 @@ button {
 
 .load-more:hover {
   background-color: #357abd;
-}
-
-.calendars-wrapper {
-  overflow-x: auto;
-  width: 100%;
 }

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import "../App/App.css";
 import Calendar from "../Calendar/Calendar";
 import PeopleManager from "../PeopleManager/PeopleManager";
 import TicketManager from "../TicketManager/TicketManager";
-import "./App.css";
 
 export default function App() {
   const [people, setPeople] = useState([]);
@@ -25,32 +26,15 @@ export default function App() {
     setTickets(tickets.filter((ticket) => ticket.id !== ticketId));
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const { source, destination, draggableId } = result;
-
-    if (source.droppableId === destination.droppableId) {
-      return;
-    }
-
-    const [destPersonId, destDate] = destination.droppableId.split("-");
-    const ticketToMove = tickets.find((t) => t.id === draggableId);
-
-    if (!ticketToMove) return;
-
-    const updatedTickets = tickets.map((ticket) => {
-      if (ticket.id === draggableId) {
-        return {
-          ...ticket,
-          personId: destPersonId,
-          date: destDate,
-        };
-      }
-      return ticket;
-    });
-
-    setTickets(updatedTickets);
+  const moveTicket = (ticketId, personId, date) => {
+    setTickets(
+      tickets.map((ticket) => {
+        if (ticket.id === ticketId) {
+          return { ...ticket, personId, date };
+        }
+        return ticket;
+      })
+    );
   };
 
   const loadMoreDays = () => {
@@ -72,7 +56,7 @@ export default function App() {
         deleteTicket={deleteTicket}
       />
       <div className="calendars-wrapper">
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DndProvider backend={HTML5Backend}>
           <div className="calendars-container">
             {people.map((person) => (
               <Calendar
@@ -80,6 +64,7 @@ export default function App() {
                 person={person}
                 tickets={tickets.filter((t) => t.personId === person.id)}
                 startDate={startDate}
+                moveTicket={moveTicket}
               />
             ))}
             {people.length > 0 && (
@@ -88,7 +73,7 @@ export default function App() {
               </button>
             )}
           </div>
-        </DragDropContext>
+        </DndProvider>
       </div>
     </div>
   );
