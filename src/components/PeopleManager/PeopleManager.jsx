@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function PeopleManager({ people, addPerson }) {
+export default function PeopleManager({ people, addPerson }) {
   const [newPerson, setNewPerson] = useState("");
 
   const handleSubmit = (e) => {
@@ -13,17 +13,19 @@ function PeopleManager({ people, addPerson }) {
 
   return (
     <div className="people-manager">
-      <h2>Employé</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={newPerson}
           onChange={(e) => setNewPerson(e.target.value)}
           placeholder="Add new person"
+          className="modal-input"
         />
-        <button type="submit">Add</button>
+        <button type="submit" className="modal-button">
+          Add
+        </button>
       </form>
-      <ul>
+      <ul className="people-list">
         {people.map((person) => (
           <li key={person.id}>{person.name}</li>
         ))}
@@ -31,5 +33,3 @@ function PeopleManager({ people, addPerson }) {
     </div>
   );
 }
-
-export default PeopleManager;

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import "../App/App.css";
 import Calendar from "../Calendar/Calendar";
-import PeopleManager from "../PeopleManager/PeopleManager";
-import TicketManager from "../TicketManager/TicketManager";
+import Navbar from "../Navbar/Navbar";
+import "./App.css";
 
 export default function App() {
   const [people, setPeople] = useState([]);
@@ -47,16 +46,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Calendrier BE</h1>
-      <div className="header-section">
-        <PeopleManager people={people} addPerson={addPerson} />
-        <TicketManager
-          people={people}
-          tickets={tickets}
-          addTicket={addTicket}
-          deleteTicket={deleteTicket}
-        />
-      </div>
+      <Navbar people={people} addPerson={addPerson} addTicket={addTicket} />
       <div className="calendars-wrapper">
         <DndProvider backend={HTML5Backend}>
           <div className="calendars-container">

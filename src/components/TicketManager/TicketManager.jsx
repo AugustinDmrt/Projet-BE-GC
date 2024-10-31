@@ -1,11 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-export default function TicketManager({
-  people,
-  tickets,
-  addTicket,
-  deleteTicket,
-}) {
+export default function TicketManager({ people, addTicket, closeModal }) {
   const [newTicket, setNewTicket] = useState({
     personId: "",
     date: "",
@@ -21,12 +16,12 @@ export default function TicketManager({
         newTicket.description.trim()
       );
       setNewTicket({ personId: "", date: "", description: "" });
+      closeModal();
     }
   };
 
   return (
     <div className="ticket-manager">
-      <h2>Ajout d'un nouveau ticket</h2>
       <form onSubmit={handleSubmit}>
         <select
           value={newTicket.personId}
@@ -34,6 +29,7 @@ export default function TicketManager({
             setNewTicket({ ...newTicket, personId: e.target.value })
           }
           required
+          className="modal-input"
         >
           <option value="">Select a person</option>
           {people.map((person) => (
@@ -47,6 +43,7 @@ export default function TicketManager({
           value={newTicket.date}
           onChange={(e) => setNewTicket({ ...newTicket, date: e.target.value })}
           required
+          className="modal-input"
         />
         <input
           type="text"
@@ -56,8 +53,11 @@ export default function TicketManager({
           }
           placeholder="Ticket description"
           required
+          className="modal-input"
         />
-        <button type="submit">Add Ticket</button>
+        <button type="submit" className="modal-button">
+          Add Ticket
+        </button>
       </form>
     </div>
   );
