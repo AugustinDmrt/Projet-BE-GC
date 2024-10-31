@@ -9,7 +9,7 @@ export default function Navbar({ people, addPerson, addTicket }) {
 
   return (
     <nav className="navbar">
-      <h1 className="navbar-title">Calendar Ticket Manager</h1>
+      <h1 className="navbar-title">Calendrier BE</h1>
       <div className="navbar-buttons">
         <button
           onClick={() => setIsPeopleModalOpen(true)}
