@@ -26,7 +26,7 @@ export default function TicketManager({
 
   return (
     <div className="ticket-manager">
-      <h2>Add New Ticket</h2>
+      <h2>Ajout d'un nouveau ticket</h2>
       <form onSubmit={handleSubmit}>
         <select
           value={newTicket.personId}

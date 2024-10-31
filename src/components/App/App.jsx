@@ -47,14 +47,16 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Calendar Ticket Manager</h1>
-      <PeopleManager people={people} addPerson={addPerson} />
-      <TicketManager
-        people={people}
-        tickets={tickets}
-        addTicket={addTicket}
-        deleteTicket={deleteTicket}
-      />
+      <h1>Calendrier BE</h1>
+      <div className="header-section">
+        <PeopleManager people={people} addPerson={addPerson} />
+        <TicketManager
+          people={people}
+          tickets={tickets}
+          addTicket={addTicket}
+          deleteTicket={deleteTicket}
+        />
+      </div>
       <div className="calendars-wrapper">
         <DndProvider backend={HTML5Backend}>
           <div className="calendars-container">

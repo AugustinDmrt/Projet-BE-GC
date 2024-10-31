@@ -154,3 +154,9 @@ button {
   overflow-x: auto;
   width: 100%;
 }
+
+.header-section {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}

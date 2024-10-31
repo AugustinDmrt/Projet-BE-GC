@@ -13,7 +13,7 @@ function PeopleManager({ people, addPerson }) {
 
   return (
     <div className="people-manager">
-      <h2>People</h2>
+      <h2>Employé</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
