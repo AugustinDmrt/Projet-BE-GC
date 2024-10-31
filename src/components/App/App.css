@@ -118,7 +118,7 @@
 .calendars-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   overflow-x: auto;
   padding: 20px;
   scroll-behavior: smooth;
@@ -141,7 +141,7 @@
   left: 0;
   z-index: 10;
   background: white;
-  height: 200px;
+  height: 180px;
   display: flex;
   align-items: center;
   border-right: 1px solid #e5e5e5;
@@ -155,8 +155,8 @@
 }
 
 .calendar-day {
-  min-width: 200px;
-  height: 200px;
+  min-width: 180px;
+  height: 180px;
   padding: 10px;
   border: 1px solid #ccc;
   margin-right: 5px;
@@ -195,6 +195,7 @@
 
 .date {
   text-transform: capitalize;
+  font-size: 12px;
 }
 
 .people-list {
