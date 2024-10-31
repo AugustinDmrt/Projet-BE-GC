@@ -1,4 +1,13 @@
-import { addDays, eachDayOfInterval, format, isWeekend } from "date-fns";
+import {
+  addDays,
+  eachDayOfInterval,
+  format,
+  getWeek,
+  isWeekend,
+  startOfWeek,
+  subDays,
+} from "date-fns";
+import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import Ticket from "../Ticket/Ticket";
@@ -8,13 +17,31 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
 
   useEffect(() => {
     const generateDays = (start) => {
-      return eachDayOfInterval({ start, end: addDays(start, 30) }).filter(
-        (day) => !isWeekend(day)
-      );
+      const today = new Date();
+      const previousWeekStart = startOfWeek(subDays(today, 7));
+      return eachDayOfInterval({
+        start: previousWeekStart,
+        end: addDays(start, 30),
+      }).filter((day) => !isWeekend(day));
     };
 
     setDays(generateDays(startDate));
   }, [startDate]);
+
+  const scrollToToday = () => {
+    const today = document.querySelector(".today");
+    if (today) {
+      today.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollToToday();
+  }, [days]);
 
   const CalendarDay = ({ day, dayTickets }) => {
     const [{ isOver }, drop] = useDrop(() => ({
@@ -27,9 +54,22 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
       }),
     }));
 
+    const isToday =
+      format(new Date(), "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
+    const weekNumber = getWeek(day);
+    const formattedDate = format(day, "EEEE dd MMMM", { locale: fr });
+
     return (
-      <div ref={drop} className={`calendar-day ${isOver ? "drag-over" : ""}`}>
-        <div className="day-header">{format(day, "EEE dd")}</div>
+      <div
+        ref={drop}
+        className={`calendar-day ${isOver ? "drag-over" : ""} ${
+          isToday ? "today" : ""
+        }`}
+      >
+        <div className="day-header">
+          <div className="week-number">S{weekNumber}</div>
+          <div className="date">{formattedDate}</div>
+        </div>
         {dayTickets.map((ticket) => (
           <Ticket key={ticket.id} ticket={ticket} />
         ))}

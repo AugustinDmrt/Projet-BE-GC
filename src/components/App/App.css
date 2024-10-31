@@ -3,23 +3,15 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .calendars-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 1;
-  position: relative;
-}
-
-.calendars-wrapper {
-  width: 100%;
   overflow-x: auto;
-  position: relative;
+  padding-bottom: 15px;
+  scroll-behavior: smooth;
 }
 
 .calendar-container {
@@ -27,7 +19,6 @@
   align-items: flex-start;
   position: relative;
   min-width: fit-content;
-  margin-bottom: 20px;
 }
 
 .calendar-name {
@@ -50,19 +41,24 @@
 .calendar {
   display: flex;
   margin-left: 10px;
-  height: 200px;
+  scroll-behavior: smooth;
 }
 
 .calendar-day {
-  min-width: 150px;
-  height: 100%;
+  min-width: 200px;
+  height: 200px;
   padding: 10px;
   border: 1px solid #ccc;
   margin-right: 5px;
+  overflow-y: auto;
   background: white;
   transition: background-color 0.2s, border 0.2s;
-  display: flex;
-  flex-direction: column;
+  scroll-margin-inline: 40px;
+}
+
+.calendar-day.today {
+  background-color: #fff8dc;
+  border: 2px solid #ffd700;
 }
 
 .calendar-day.drag-over {
@@ -73,28 +69,22 @@
 .day-header {
   font-weight: bold;
   margin-bottom: 10px;
-  background: white;
+  position: sticky;
+  top: 0;
+  background: inherit;
   padding: 5px 0;
   border-bottom: 1px solid #eee;
+  z-index: 1;
 }
 
-.day-content {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 5px;
+.week-number {
+  font-size: 0.8em;
+  color: #666;
+  margin-bottom: 2px;
 }
 
-.day-content::-webkit-scrollbar {
-  width: 4px;
-}
-
-.day-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.day-content::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 2px;
+.date {
+  text-transform: capitalize;
 }
 
 .people-manager,
@@ -158,4 +148,9 @@ button {
 
 .load-more:hover {
   background-color: #357abd;
+}
+
+.calendars-wrapper {
+  overflow-x: auto;
+  width: 100%;
 }
