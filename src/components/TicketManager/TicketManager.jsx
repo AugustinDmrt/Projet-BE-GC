@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { WAITING_ZONE_DATE } from "../App/App";
 
 export default function TicketManager({ people, addTicket, closeModal }) {
   const [newTicket, setNewTicket] = useState({
@@ -9,12 +10,10 @@ export default function TicketManager({ people, addTicket, closeModal }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newTicket.personId && newTicket.date && newTicket.description.trim()) {
-      addTicket(
-        newTicket.personId,
-        newTicket.date,
-        newTicket.description.trim()
-      );
+    if (newTicket.description.trim()) {
+      const personId = newTicket.personId || "waiting";
+      const date = newTicket.date || WAITING_ZONE_DATE;
+      addTicket(personId, date, newTicket.description.trim());
       setNewTicket({ personId: "", date: "", description: "" });
       closeModal();
     }
@@ -28,35 +27,37 @@ export default function TicketManager({ people, addTicket, closeModal }) {
           onChange={(e) =>
             setNewTicket({ ...newTicket, personId: e.target.value })
           }
-          required
           className="modal-input"
         >
-          <option value="">Select a person</option>
+          <option value="">Zone d'attente</option>
           {people.map((person) => (
             <option key={person.id} value={person.id}>
               {person.name}
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          value={newTicket.date}
-          onChange={(e) => setNewTicket({ ...newTicket, date: e.target.value })}
-          required
-          className="modal-input"
-        />
+        {newTicket.personId && (
+          <input
+            type="date"
+            value={newTicket.date}
+            onChange={(e) =>
+              setNewTicket({ ...newTicket, date: e.target.value })
+            }
+            className="modal-input"
+          />
+        )}
         <input
           type="text"
           value={newTicket.description}
           onChange={(e) =>
             setNewTicket({ ...newTicket, description: e.target.value })
           }
-          placeholder="Ticket description"
+          placeholder="Description du ticket"
           required
           className="modal-input"
         />
         <button type="submit" className="modal-button">
-          Add Ticket
+          Ajouter
         </button>
       </form>
     </div>

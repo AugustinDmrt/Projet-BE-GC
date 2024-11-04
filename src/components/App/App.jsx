@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Calendar from "../Calendar/Calendar";
 import Navbar from "../Navbar/Navbar";
+import WaitingZone from "../WaitingZone/WaitingZone";
 import "./App.css";
+
+export const WAITING_ZONE_DATE = "0001-01-01";
 
 export default function App() {
   const [people, setPeople] = useState([]);
@@ -15,34 +18,47 @@ export default function App() {
   };
 
   const addTicket = (personId, date, description) => {
-    setTickets([
-      ...tickets,
-      { id: Date.now().toString(), personId, date, description },
-    ]);
+    const newTicket = {
+      id: Date.now().toString(),
+      personId: personId || "waiting",
+      date: date || WAITING_ZONE_DATE,
+      description,
+    };
+    setTickets((prev) => [...prev, newTicket]);
   };
 
-  const deleteTicket = (ticketId) => {
-    setTickets(tickets.filter((ticket) => ticket.id !== ticketId));
-  };
-
-  const moveTicket = (ticketId, personId, date) => {
-    setTickets(
-      tickets.map((ticket) => {
+  const moveTicket = (ticketId, newPersonId, newDate) => {
+    setTickets((prev) =>
+      prev.map((ticket) => {
         if (ticket.id === ticketId) {
-          return { ...ticket, personId, date };
+          return {
+            ...ticket,
+            personId: newPersonId,
+            date: newDate,
+          };
         }
         return ticket;
       })
     );
   };
 
-  const loadMoreDays = () => {
+  const loadMoreDays = useCallback(() => {
     setStartDate((prevDate) => {
       const newDate = new Date(prevDate);
       newDate.setDate(newDate.getDate() + 31);
       return newDate;
     });
-  };
+  }, []);
+
+  const waitingTickets = tickets.filter(
+    (ticket) =>
+      ticket.personId === "waiting" || ticket.date === WAITING_ZONE_DATE
+  );
+
+  const assignedTickets = tickets.filter(
+    (ticket) =>
+      ticket.personId !== "waiting" && ticket.date !== WAITING_ZONE_DATE
+  );
 
   return (
     <div className="App">
@@ -54,17 +70,16 @@ export default function App() {
               <Calendar
                 key={person.id}
                 person={person}
-                tickets={tickets.filter((t) => t.personId === person.id)}
+                tickets={assignedTickets.filter(
+                  (t) => t.personId === person.id
+                )}
                 startDate={startDate}
                 moveTicket={moveTicket}
+                onScrollEnd={loadMoreDays}
               />
             ))}
-            {people.length > 0 && (
-              <button onClick={loadMoreDays} className="load-more">
-                Load More
-              </button>
-            )}
           </div>
+          <WaitingZone tickets={waitingTickets} moveTicket={moveTicket} />
         </DndProvider>
       </div>
     </div>

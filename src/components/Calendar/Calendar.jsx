@@ -8,12 +8,19 @@ import {
   subDays,
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Ticket from "../Ticket/Ticket";
 
-export default function Calendar({ person, tickets, startDate, moveTicket }) {
+export default function Calendar({
+  person,
+  tickets,
+  startDate,
+  moveTicket,
+  onScrollEnd,
+}) {
   const [days, setDays] = useState([]);
+  const calendarRef = useRef(null);
 
   useEffect(() => {
     const generateDays = (start) => {
@@ -27,6 +34,30 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
 
     setDays(generateDays(startDate));
   }, [startDate]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!calendarRef.current) return;
+
+      const { scrollLeft, scrollWidth, clientWidth } = calendarRef.current;
+      const scrollEnd = scrollWidth - clientWidth;
+
+      if (scrollLeft >= scrollEnd - 100) {
+        onScrollEnd();
+      }
+    };
+
+    const calendar = calendarRef.current;
+    if (calendar) {
+      calendar.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (calendar) {
+        calendar.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [onScrollEnd]);
 
   const scrollToToday = () => {
     const today = document.querySelector(".today");
@@ -44,7 +75,7 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
   }, [days]);
 
   const CalendarDay = ({ day, dayTickets }) => {
-    const [{ isOver }, drop] = useDrop(() => ({
+    const [{ isOver }, drop] = useDrop({
       accept: "ticket",
       drop: (item) => {
         moveTicket(item.id, person.id, format(day, "yyyy-MM-dd"));
@@ -52,7 +83,7 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
-    }));
+    });
 
     const isToday =
       format(new Date(), "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
@@ -80,7 +111,7 @@ export default function Calendar({ person, tickets, startDate, moveTicket }) {
   return (
     <div className="calendar-container">
       <div className="calendar-name">{person.name}</div>
-      <div className="calendar">
+      <div className="calendar" ref={calendarRef}>
         {days.map((day) => {
           const dayStr = format(day, "yyyy-MM-dd");
           const dayTickets = tickets.filter((ticket) => ticket.date === dayStr);
