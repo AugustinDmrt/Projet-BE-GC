@@ -18,6 +18,7 @@ export default function Calendar({
   startDate,
   moveTicket,
   onScrollEnd,
+  updateTicketType,
 }) {
   const [days, setDays] = useState([]);
   const calendarRef = useRef(null);
@@ -102,7 +103,11 @@ export default function Calendar({
           <div className="date">{formattedDate}</div>
         </div>
         {dayTickets.map((ticket) => (
-          <Ticket key={ticket.id} ticket={ticket} />
+          <Ticket
+            key={ticket.id}
+            ticket={ticket}
+            updateTicketType={updateTicketType}
+          />
         ))}
       </div>
     );

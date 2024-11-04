@@ -8,6 +8,11 @@ import "./App.css";
 
 export const WAITING_ZONE_DATE = "0001-01-01";
 
+export const TICKET_TYPES = {
+  pec: { name: "PEC", color: "#5dade2" },
+  com: { name: "Commercial", color: "#66bb6a" },
+};
+
 export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
@@ -23,6 +28,7 @@ export default function App() {
       personId: personId || "waiting",
       date: date || WAITING_ZONE_DATE,
       description,
+      type: null,
     };
     setTickets((prev) => [...prev, newTicket]);
   };
@@ -35,6 +41,20 @@ export default function App() {
             ...ticket,
             personId: newPersonId,
             date: newDate,
+          };
+        }
+        return ticket;
+      })
+    );
+  };
+
+  const updateTicketType = (ticketId, type) => {
+    setTickets((prev) =>
+      prev.map((ticket) => {
+        if (ticket.id === ticketId) {
+          return {
+            ...ticket,
+            type,
           };
         }
         return ticket;
@@ -76,10 +96,15 @@ export default function App() {
                 startDate={startDate}
                 moveTicket={moveTicket}
                 onScrollEnd={loadMoreDays}
+                updateTicketType={updateTicketType}
               />
             ))}
           </div>
-          <WaitingZone tickets={waitingTickets} moveTicket={moveTicket} />
+          <WaitingZone
+            tickets={waitingTickets}
+            moveTicket={moveTicket}
+            updateTicketType={updateTicketType}
+          />
         </DndProvider>
       </div>
     </div>
