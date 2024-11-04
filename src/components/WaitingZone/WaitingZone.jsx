@@ -21,7 +21,7 @@ export default function WaitingZone({ tickets, moveTicket }) {
         backgroundColor: isOver ? "#e9ecef" : "#f8f9fa",
       }}
     >
-      <h3>Zone d'attente des tickets ({tickets.length})</h3>
+      {/* <h3>Zone d'attente des tickets ({tickets.length})</h3> */}
       <div className="waiting-zone-tickets">
         {tickets.map((ticket) => (
           <Ticket key={ticket.id} ticket={ticket} />
