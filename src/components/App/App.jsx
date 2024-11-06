@@ -17,6 +17,7 @@ export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
   const addPerson = (name) => {
     setPeople([...people, { id: Date.now().toString(), name }]);
@@ -80,10 +81,14 @@ export default function App() {
       ticket.personId !== "waiting" && ticket.date !== WAITING_ZONE_DATE
   );
 
+  const toggleSideMenu = () => {
+    setIsSideMenuOpen(!isSideMenuOpen);
+  };
+
   return (
     <div className="App">
       <Navbar people={people} addPerson={addPerson} addTicket={addTicket} />
-      <div className="calendars-wrapper">
+      <div className={`calendars-wrapper ${isSideMenuOpen ? "menu-open" : ""}`}>
         <DndProvider backend={HTML5Backend}>
           <div className="calendars-container">
             {people.map((person) => (
@@ -100,11 +105,22 @@ export default function App() {
               />
             ))}
           </div>
-          <WaitingZone
-            tickets={waitingTickets}
-            moveTicket={moveTicket}
-            updateTicketType={updateTicketType}
-          />
+          <div className={`side-menu ${isSideMenuOpen ? "open" : ""}`}>
+            <WaitingZone
+              tickets={waitingTickets}
+              moveTicket={moveTicket}
+              updateTicketType={updateTicketType}
+            />
+          </div>
+          <button
+            className="side-menu-toggle"
+            onClick={toggleSideMenu}
+            aria-label={
+              isSideMenuOpen ? "Close waiting zone" : "Open waiting zone"
+            }
+          >
+            {isSideMenuOpen ? "→" : "←"}
+          </button>
         </DndProvider>
       </div>
     </div>

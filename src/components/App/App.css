@@ -284,21 +284,86 @@
   flex-direction: column;
 }
 
-/* Zone d'attente des tickets */
-.waiting-zone {
-  min-height: 200px;
-  margin: 20px;
-  background-color: #f8f9fa;
-  border: 2px dashed #dee2e6;
-  border-radius: 8px;
+.side-menu {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 300px;
+  background-color: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 90;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  padding-top: 60px;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.side-menu-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: background-color 0.2s;
+}
+
+.side-menu-toggle:hover {
+  background-color: #357abd;
+}
+
+.waiting-zone {
+  height: 100%;
+  margin: 0;
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.waiting-zone h3 {
+  padding: 1rem;
+  margin: 0;
+  background-color: #f1f3f5;
+  border-bottom: 1px solid #dee2e6;
+  position: sticky;
+  top: 0;
 }
 
 .waiting-zone-tickets {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
-  padding: 10px;
+  padding: 1rem;
+  flex: 1;
+}
+
+/* Ajuster le conteneur principal quand le menu est ouvert */
+.calendars-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-right 0.3s ease-in-out;
+}
+
+.calendars-wrapper.menu-open {
+  margin-right: 300px;
 }
