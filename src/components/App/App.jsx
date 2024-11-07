@@ -23,13 +23,45 @@ export default function App() {
     setPeople([...people, { id: Date.now().toString(), name }]);
   };
 
-  const addTicket = (personId, date, description) => {
+  const addTicket = (
+    personId,
+    date,
+    description,
+    type = null,
+    codeArticle = null
+  ) => {
+    // Si un code article est fourni, vérifier s'il existe déjà
+    if (codeArticle) {
+      const existingTicket = tickets.find(
+        (ticket) => ticket.codeArticle === codeArticle
+      );
+      if (existingTicket) {
+        // Mettre à jour le ticket existant au lieu d'en créer un nouveau
+        setTickets((prev) =>
+          prev.map((ticket) => {
+            if (ticket.codeArticle === codeArticle) {
+              return {
+                ...ticket,
+                description,
+                date: date || WAITING_ZONE_DATE,
+                type,
+              };
+            }
+            return ticket;
+          })
+        );
+        return;
+      }
+    }
+
+    // Créer un nouveau ticket
     const newTicket = {
       id: Date.now().toString(),
       personId: personId || "waiting",
       date: date || WAITING_ZONE_DATE,
       description,
-      type: null,
+      type,
+      codeArticle, // Ajouter le code article au ticket
     };
     setTickets((prev) => [...prev, newTicket]);
   };
@@ -71,6 +103,10 @@ export default function App() {
     });
   }, []);
 
+  const toggleSideMenu = () => {
+    setIsSideMenuOpen(!isSideMenuOpen);
+  };
+
   const waitingTickets = tickets.filter(
     (ticket) =>
       ticket.personId === "waiting" || ticket.date === WAITING_ZONE_DATE
@@ -80,10 +116,6 @@ export default function App() {
     (ticket) =>
       ticket.personId !== "waiting" && ticket.date !== WAITING_ZONE_DATE
   );
-
-  const toggleSideMenu = () => {
-    setIsSideMenuOpen(!isSideMenuOpen);
-  };
 
   return (
     <div className="App">

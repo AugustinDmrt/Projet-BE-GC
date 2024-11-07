@@ -1,4 +1,5 @@
 import React from "react";
+import CSVImporter from "../CSVImporter/CSVImporter";
 import Modal from "../Modal/Modal";
 import PeopleManager from "../PeopleManager/PeopleManager";
 import TicketManager from "../TicketManager/TicketManager";
@@ -6,6 +7,7 @@ import TicketManager from "../TicketManager/TicketManager";
 export default function Navbar({ people, addPerson, addTicket }) {
   const [isPeopleModalOpen, setIsPeopleModalOpen] = React.useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = React.useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
 
   return (
     <nav className="navbar">
@@ -22,6 +24,12 @@ export default function Navbar({ people, addPerson, addTicket }) {
           className="navbar-button"
         >
           Add Ticket
+        </button>
+        <button
+          onClick={() => setIsImportModalOpen(true)}
+          className="navbar-button"
+        >
+          Import CSV
         </button>
       </div>
 
@@ -42,6 +50,17 @@ export default function Navbar({ people, addPerson, addTicket }) {
           people={people}
           addTicket={addTicket}
           closeModal={() => setIsTicketModalOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title="Import CSV"
+      >
+        <CSVImporter
+          addTicket={addTicket}
+          closeModal={() => setIsImportModalOpen(false)}
         />
       </Modal>
     </nav>

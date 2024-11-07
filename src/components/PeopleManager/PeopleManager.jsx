@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function PeopleManager({ people, addPerson }) {
   const [newPerson, setNewPerson] = useState("");

@@ -367,3 +367,30 @@
 .calendars-wrapper.menu-open {
   margin-right: 300px;
 }
+
+.csv-importer {
+  padding: 1.5rem;
+}
+
+.import-instructions {
+  margin-bottom: 1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.import-error {
+  color: #dc3545;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #fff3f3;
+}
+
+.file-input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
