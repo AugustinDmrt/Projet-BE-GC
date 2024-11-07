@@ -3,13 +3,16 @@ import { useDrag } from "react-dnd";
 import { TICKET_TYPES } from "../App/App";
 
 export default function Ticket({ ticket, updateTicketType }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "ticket",
-    item: { id: ticket.id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "ticket",
+      item: { id: ticket.codeArticle || ticket.id },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
     }),
-  }));
+    [ticket.codeArticle, ticket.id]
+  );
 
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -26,7 +29,7 @@ export default function Ticket({ ticket, updateTicketType }) {
   };
 
   const handleTypeSelect = (type) => {
-    updateTicketType(ticket.id, type);
+    updateTicketType(ticket.codeArticle || ticket.id, type);
     setShowTypeMenu(false);
   };
 
@@ -58,12 +61,10 @@ export default function Ticket({ ticket, updateTicketType }) {
         <div
           ref={menuRef}
           className="type-menu"
-          style={
-            {
-              // left: menuPosition.x,
-              // top: menuPosition.y,
-            }
-          }
+          style={{
+            left: menuPosition.x,
+            top: menuPosition.y,
+          }}
         >
           {Object.entries(TICKET_TYPES).map(([type, { name, color }]) => (
             <div

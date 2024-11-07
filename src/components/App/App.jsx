@@ -17,7 +17,7 @@ export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(true); // Ouvert par défaut
 
   const addPerson = (name) => {
     setPeople([...people, { id: Date.now().toString(), name }]);
@@ -30,13 +30,11 @@ export default function App() {
     type = null,
     codeArticle = null
   ) => {
-    // Si un code article est fourni, vérifier s'il existe déjà
     if (codeArticle) {
       const existingTicket = tickets.find(
         (ticket) => ticket.codeArticle === codeArticle
       );
       if (existingTicket) {
-        // Mettre à jour le ticket existant au lieu d'en créer un nouveau
         setTickets((prev) =>
           prev.map((ticket) => {
             if (ticket.codeArticle === codeArticle) {
@@ -54,14 +52,13 @@ export default function App() {
       }
     }
 
-    // Créer un nouveau ticket
     const newTicket = {
-      id: Date.now().toString(),
+      id: codeArticle || Date.now().toString(), // Utiliser le code article comme ID
       personId: personId || "waiting",
       date: date || WAITING_ZONE_DATE,
       description,
       type,
-      codeArticle, // Ajouter le code article au ticket
+      codeArticle,
     };
     setTickets((prev) => [...prev, newTicket]);
   };

@@ -25,11 +25,8 @@ export default function CSVImporter({ addTicket, closeModal }) {
           .split(";")
           .map((field) => field.trim());
         if (codeArticle && designation) {
-          const description = `${codeArticle} | ${designation} | ${
-            client || ""
-          }`.trim();
+          const description = `${designation} | ${client || ""}`.trim();
           const formattedDate = formatDate(datePrevue);
-          // Passer le code article comme identifiant unique
           addTicket(
             "waiting",
             formattedDate || WAITING_ZONE_DATE,
