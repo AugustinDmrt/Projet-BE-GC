@@ -91,6 +91,13 @@ export default function Calendar({
     const weekNumber = getWeek(day);
     const formattedDate = format(day, "EEEE dd MMMM", { locale: fr });
 
+    // Sort tickets to put "done" tickets at the end
+    const sortedTickets = [...dayTickets].sort((a, b) => {
+      if (a.type === "done" && b.type !== "done") return 1;
+      if (a.type !== "done" && b.type === "done") return -1;
+      return 0;
+    });
+
     return (
       <div
         ref={drop}
@@ -102,7 +109,7 @@ export default function Calendar({
           <div className="week-number">S{weekNumber}</div>
           <div className="date">{formattedDate}</div>
         </div>
-        {dayTickets.map((ticket) => (
+        {sortedTickets.map((ticket) => (
           <Ticket
             key={ticket.id}
             ticket={ticket}

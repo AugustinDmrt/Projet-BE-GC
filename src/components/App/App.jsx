@@ -11,6 +11,7 @@ export const WAITING_ZONE_DATE = "0001-01-01";
 export const TICKET_TYPES = {
   pec: { name: "PEC", color: "#5dade2" },
   com: { name: "Commercial", color: "#66bb6a" },
+  done: { name: "Fait", color: "#9e9e9e" },
 };
 
 export default function App() {
