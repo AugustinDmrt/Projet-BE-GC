@@ -21,10 +21,10 @@ export default function CSVImporter({ addTicket, closeModal }) {
     // Skip header row and process each line
     lines.slice(1).forEach((line) => {
       if (line.trim()) {
-        const [codeArticle, designation, client, datePrevue] = line
+        const [id, designation, client, datePrevue] = line
           .split(";")
           .map((field) => field.trim());
-        if (codeArticle && designation) {
+        if (id && designation) {
           const description = `${designation} | ${client || ""}`.trim();
           const formattedDate = formatDate(datePrevue);
           addTicket(
@@ -32,7 +32,7 @@ export default function CSVImporter({ addTicket, closeModal }) {
             formattedDate || WAITING_ZONE_DATE,
             description,
             "com",
-            codeArticle
+            id
           );
         }
       }
@@ -70,7 +70,7 @@ export default function CSVImporter({ addTicket, closeModal }) {
       <p className="import-instructions">
         Le fichier CSV doit contenir les colonnes:
         <br />
-        Code Article;Désignation;Client;Date prévue de fin BE
+        Identifiant interne (ID);Désignation;Client;Date Fin BE Calculée
       </p>
       {error && <p className="import-error">{error}</p>}
       <input

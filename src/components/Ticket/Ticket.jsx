@@ -61,10 +61,12 @@ export default function Ticket({ ticket, updateTicketType }) {
         <div
           ref={menuRef}
           className="type-menu"
-          style={{
-            left: menuPosition.x,
-            top: menuPosition.y,
-          }}
+          style={
+            {
+              // left: menuPosition.x,
+              // top: menuPosition.y,
+            }
+          }
         >
           {Object.entries(TICKET_TYPES).map(([type, { name, color }]) => (
             <div
