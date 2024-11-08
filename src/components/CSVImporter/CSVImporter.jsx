@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { WAITING_ZONE_DATE } from "../App/App";
 
 export default function CSVImporter({ addTicket, closeModal }) {
   const [error, setError] = useState("");
@@ -25,15 +24,10 @@ export default function CSVImporter({ addTicket, closeModal }) {
           .split(";")
           .map((field) => field.trim());
         if (id && designation) {
-          const description = `${designation} | ${client || ""}`.trim();
-          const formattedDate = formatDate(datePrevue);
-          addTicket(
-            "waiting",
-            formattedDate || WAITING_ZONE_DATE,
-            description,
-            "com",
-            id
-          );
+          const description = `${designation}${client ? ` | ${client}` : ""}${
+            datePrevue ? ` | ${datePrevue}` : ""
+          }`.trim();
+          addTicket(undefined, undefined, description, "com", id);
         }
       }
     });

@@ -17,7 +17,7 @@ export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(true); // Ouvert par défaut
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(true);
 
   const addPerson = (name) => {
     setPeople([...people, { id: Date.now().toString(), name }]);
@@ -30,37 +30,34 @@ export default function App() {
     type = null,
     codeArticle = null
   ) => {
-    if (codeArticle) {
-      const existingTicket = tickets.find(
+    setTickets((prev) => {
+      const existingTicket = prev.find(
         (ticket) => ticket.codeArticle === codeArticle
       );
-      if (existingTicket) {
-        setTickets((prev) =>
-          prev.map((ticket) => {
-            if (ticket.codeArticle === codeArticle) {
-              return {
-                ...ticket,
-                description,
-                date: date || WAITING_ZONE_DATE,
-                type,
-              };
-            }
-            return ticket;
-          })
-        );
-        return;
-      }
-    }
 
-    const newTicket = {
-      id: codeArticle || Date.now().toString(), // Utiliser le code article comme ID
-      personId: personId || "waiting",
-      date: date || WAITING_ZONE_DATE,
-      description,
-      type,
-      codeArticle,
-    };
-    setTickets((prev) => [...prev, newTicket]);
+      if (existingTicket) {
+        return prev.map((ticket) => {
+          if (ticket.codeArticle === codeArticle) {
+            return {
+              ...ticket,
+              description,
+              type: type || ticket.type,
+            };
+          }
+          return ticket;
+        });
+      }
+
+      const newTicket = {
+        id: codeArticle || Date.now().toString(),
+        personId: personId || "waiting",
+        date: date || WAITING_ZONE_DATE,
+        description,
+        type,
+        codeArticle,
+      };
+      return [...prev, newTicket];
+    });
   };
 
   const moveTicket = (ticketId, newPersonId, newDate) => {
