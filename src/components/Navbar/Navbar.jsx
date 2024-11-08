@@ -3,6 +3,7 @@ import CSVImporter from "../CSVImporter/CSVImporter";
 import Modal from "../Modal/Modal";
 import PeopleManager from "../PeopleManager/PeopleManager";
 import TicketManager from "../TicketManager/TicketManager";
+import "./Navbar.css";
 
 export default function Navbar({ people, addPerson, addTicket }) {
   const [isPeopleModalOpen, setIsPeopleModalOpen] = React.useState(false);
@@ -11,6 +12,7 @@ export default function Navbar({ people, addPerson, addTicket }) {
 
   return (
     <nav className="navbar">
+      <img src="logo.svg" alt="" className="imgNavBar" />
       <h1 className="navbar-title">Calendrier BE</h1>
       <div className="navbar-buttons">
         <button
