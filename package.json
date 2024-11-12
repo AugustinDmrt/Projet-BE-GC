@@ -5,14 +5,18 @@
   "type": "module",
   "homepage": "https://augustindmrt.github.io/Projet-BE-GC/",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node server/index.js\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-big-schedule": "^4.4.1",
@@ -24,6 +28,7 @@
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
+    "concurrently": "^9.1.0",
     "eslint": "^9.11.1",
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Calendar from "../Calendar/Calendar";
@@ -14,80 +14,125 @@ export const TICKET_TYPES = {
   done: { name: "Fait", color: "#9e9e9e" },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function App() {
   const [people, setPeople] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(true);
 
-  const addPerson = (name) => {
-    setPeople([...people, { id: Date.now().toString(), name }]);
+  useEffect(() => {
+    fetchPeople();
+    fetchTickets();
+  }, []);
+
+  const fetchPeople = async () => {
+    try {
+      const response = await fetch(`${API_URL}/people`);
+      const data = await response.json();
+      setPeople(data);
+    } catch (error) {
+      console.error("Error fetching people:", error);
+    }
   };
 
-  const addTicket = (
+  const fetchTickets = async () => {
+    try {
+      const response = await fetch(`${API_URL}/tickets`);
+      const data = await response.json();
+      setTickets(data);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
+
+  const addPerson = async (name) => {
+    try {
+      const id = Date.now().toString();
+      const response = await fetch(`${API_URL}/people`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name }),
+      });
+      const data = await response.json();
+      setPeople([...people, data]);
+    } catch (error) {
+      console.error("Error adding person:", error);
+    }
+  };
+
+  const addTicket = async (
     personId,
     date,
     description,
     type = null,
     codeArticle = null
   ) => {
-    setTickets((prev) => {
-      const existingTicket = prev.find(
-        (ticket) => ticket.codeArticle === codeArticle
+    try {
+      const id = codeArticle || Date.now().toString();
+      const response = await fetch(`${API_URL}/tickets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          personId: personId || "waiting",
+          date: date || WAITING_ZONE_DATE,
+          description,
+          type,
+          codeArticle,
+        }),
+      });
+      const data = await response.json();
+      setTickets([...tickets, data]);
+    } catch (error) {
+      console.error("Error adding ticket:", error);
+    }
+  };
+
+  const moveTicket = async (ticketId, newPersonId, newDate) => {
+    try {
+      const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          personId: newPersonId,
+          date: newDate,
+          type: tickets.find((t) => t.id === ticketId)?.type,
+        }),
+      });
+      const data = await response.json();
+      setTickets((prev) =>
+        prev.map((ticket) =>
+          ticket.id === ticketId ? { ...ticket, ...data } : ticket
+        )
       );
-
-      if (existingTicket) {
-        return prev.map((ticket) => {
-          if (ticket.codeArticle === codeArticle) {
-            return {
-              ...ticket,
-              description,
-              type: type || ticket.type,
-            };
-          }
-          return ticket;
-        });
-      }
-
-      const newTicket = {
-        id: codeArticle || Date.now().toString(),
-        personId: personId || "waiting",
-        date: date || WAITING_ZONE_DATE,
-        description,
-        type,
-        codeArticle,
-      };
-      return [...prev, newTicket];
-    });
+    } catch (error) {
+      console.error("Error moving ticket:", error);
+    }
   };
 
-  const moveTicket = (ticketId, newPersonId, newDate) => {
-    setTickets((prev) =>
-      prev.map((ticket) => {
-        if (ticket.id === ticketId) {
-          return {
-            ...ticket,
-            personId: newPersonId,
-            date: newDate,
-          };
-        }
-        return ticket;
-      })
-    );
-  };
-
-  const updateTicketType = (ticketId, type) => {
-    setTickets((prev) =>
-      prev.map((ticket) => {
-        if (ticket.id === ticketId) {
-          return {
-            ...ticket,
-            type,
-          };
-        }
-        return ticket;
-      })
-    );
+  const updateTicketType = async (ticketId, type) => {
+    try {
+      const ticket = tickets.find((t) => t.id === ticketId);
+      const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          personId: ticket.personId,
+          date: ticket.date,
+          type,
+        }),
+      });
+      const data = await response.json();
+      setTickets((prev) =>
+        prev.map((ticket) =>
+          ticket.id === ticketId ? { ...ticket, type: data.type } : ticket
+        )
+      );
+    } catch (error) {
+      console.error("Error updating ticket type:", error);
+    }
   };
 
   const loadMoreDays = useCallback(() => {
