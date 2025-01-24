@@ -11,13 +11,7 @@ const db = new Database("tickets.db");
 app.use(cors());
 app.use(express.json());
 
-// Drop existing tables to reset the schema
-db.exec(`
-  DROP TABLE IF EXISTS tickets;
-  DROP TABLE IF EXISTS people;
-`);
-
-// Initialize database tables with updated schema
+// Initialize database tables
 db.exec(`
   CREATE TABLE IF NOT EXISTS people (
     id TEXT PRIMARY KEY,
@@ -40,7 +34,6 @@ db.exec(`
 
 // People endpoints
 app.get("/api/people", (req, res) => {
-  // Exclude the special "waiting" person from the regular list
   const people = db
     .prepare("SELECT * FROM people WHERE id != ?")
     .all("waiting");
@@ -70,11 +63,9 @@ app.get("/api/tickets", (req, res) => {
 app.post("/api/tickets", (req, res) => {
   const { id, personId, date, description, type, codeArticle } = req.body;
   try {
-    const result = db
-      .prepare(
-        "INSERT INTO tickets (id, personId, date, description, type, codeArticle) VALUES (?, ?, ?, ?, ?, ?)"
-      )
-      .run(id, personId, date, description, type, codeArticle);
+    db.prepare(
+      "INSERT INTO tickets (id, personId, date, description, type, codeArticle) VALUES (?, ?, ?, ?, ?, ?)"
+    ).run(id, personId, date, description, type, codeArticle);
     res.json({ id, personId, date, description, type, codeArticle });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -82,12 +73,48 @@ app.post("/api/tickets", (req, res) => {
 });
 
 app.put("/api/tickets/:id", (req, res) => {
-  const { personId, date, type } = req.body;
+  const { personId, date, type, description } = req.body;
+  const { id } = req.params;
+
   try {
-    db.prepare(
-      "UPDATE tickets SET personId = ?, date = ?, type = ? WHERE id = ?"
-    ).run(personId, date, type, req.params.id);
-    res.json({ id: req.params.id, personId, date, type });
+    const stmt = db.prepare(`
+      UPDATE tickets 
+      SET personId = ?, date = ?, type = ?, description = ? 
+      WHERE id = ? OR codeArticle = ?
+    `);
+
+    const result = stmt.run(personId, date, type, description, id, id);
+
+    if (result.changes === 0) {
+      res.status(404).json({ error: "Ticket not found" });
+      return;
+    }
+
+    const updatedTicket = db
+      .prepare("SELECT * FROM tickets WHERE id = ? OR codeArticle = ?")
+      .get(id, id);
+
+    res.json(updatedTicket);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete("/api/tickets/:id", (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const stmt = db.prepare(
+      "DELETE FROM tickets WHERE id = ? OR codeArticle = ?"
+    );
+    const result = stmt.run(id, id);
+
+    if (result.changes === 0) {
+      res.status(404).json({ error: "Ticket not found" });
+      return;
+    }
+
+    res.json({ success: true, id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

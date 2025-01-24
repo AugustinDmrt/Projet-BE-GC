@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { TICKET_TYPES } from "../App/App";
 
-export default function Ticket({ ticket, updateTicketType }) {
+export default function Ticket({ ticket, updateTicketType, onEdit, onDelete }) {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: "ticket",
@@ -15,15 +15,44 @@ export default function Ticket({ ticket, updateTicketType }) {
   );
 
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const [showActionMenu, setShowActionMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const menuRef = useRef(null);
 
   const handleClick = (e) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const menuWidth = 150; // Largeur approximative du menu
+
+    // Calcul de la position horizontale
+    let x = rect.left;
+    if (x + menuWidth > windowWidth) {
+      x = windowWidth - menuWidth - 10; // 10px de marge
+    }
+
     setMenuPosition({
-      x: rect.left,
-      y: rect.bottom + window.scrollY,
+      x,
+      y: rect.top + window.scrollY,
+    });
+    setShowActionMenu(true);
+  };
+
+  const handleTypeClick = (e) => {
+    e.stopPropagation();
+    setShowActionMenu(false);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const menuWidth = 150;
+
+    let x = rect.left;
+    if (x + menuWidth > windowWidth) {
+      x = windowWidth - menuWidth - 10;
+    }
+
+    setMenuPosition({
+      x,
+      y: rect.top + window.scrollY,
     });
     setShowTypeMenu(true);
   };
@@ -33,10 +62,25 @@ export default function Ticket({ ticket, updateTicketType }) {
     setShowTypeMenu(false);
   };
 
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    setShowActionMenu(false);
+    onEdit(ticket);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    setShowActionMenu(false);
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce ticket ?")) {
+      onDelete(ticket.codeArticle || ticket.id);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setShowTypeMenu(false);
+        setShowActionMenu(false);
       }
     };
 
@@ -57,16 +101,37 @@ export default function Ticket({ ticket, updateTicketType }) {
         {ticket.description}
       </div>
 
+      {showActionMenu && (
+        <div
+          ref={menuRef}
+          className="action-menu"
+          style={{
+            position: "fixed",
+            left: `${menuPosition.x}px`,
+            top: `${menuPosition.y}px`,
+          }}
+        >
+          <div className="action-menu-item" onClick={handleTypeClick}>
+            Changer le type
+          </div>
+          <div className="action-menu-item" onClick={handleEdit}>
+            Modifier
+          </div>
+          <div className="action-menu-item delete" onClick={handleDelete}>
+            Supprimer
+          </div>
+        </div>
+      )}
+
       {showTypeMenu && (
         <div
           ref={menuRef}
           className="type-menu"
-          style={
-            {
-              // left: menuPosition.x,
-              // top: menuPosition.y,
-            }
-          }
+          style={{
+            position: "fixed",
+            left: `${menuPosition.x}px`,
+            top: `${menuPosition.y}px`,
+          }}
         >
           {Object.entries(TICKET_TYPES).map(([type, { name, color }]) => (
             <div

@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Calendar from "../Calendar/Calendar";
+import Modal from "../Modal/Modal";
 import Navbar from "../Navbar/Navbar";
+import TicketManager from "../TicketManager/TicketManager";
 import WaitingZone from "../WaitingZone/WaitingZone";
 import "./App.css";
 
@@ -21,6 +23,7 @@ export default function App() {
   const [tickets, setTickets] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(true);
+  const [editingTicket, setEditingTicket] = useState(null);
 
   useEffect(() => {
     fetchPeople();
@@ -92,13 +95,15 @@ export default function App() {
 
   const moveTicket = async (ticketId, newPersonId, newDate) => {
     try {
+      const ticket = tickets.find((t) => t.id === ticketId);
       const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           personId: newPersonId,
           date: newDate,
-          type: tickets.find((t) => t.id === ticketId)?.type,
+          type: ticket.type,
+          description: ticket.description,
         }),
       });
       const data = await response.json();
@@ -122,16 +127,55 @@ export default function App() {
           personId: ticket.personId,
           date: ticket.date,
           type,
+          description: ticket.description,
         }),
       });
       const data = await response.json();
       setTickets((prev) =>
         prev.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, type: data.type } : ticket
+          ticket.id === ticketId ? { ...ticket, ...data } : ticket
         )
       );
     } catch (error) {
       console.error("Error updating ticket type:", error);
+    }
+  };
+
+  const deleteTicket = async (ticketId) => {
+    try {
+      await fetch(`${API_URL}/tickets/${ticketId}`, {
+        method: "DELETE",
+      });
+      setTickets((prev) => prev.filter((ticket) => ticket.id !== ticketId));
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+    }
+  };
+
+  const handleEditTicket = (ticket) => {
+    setEditingTicket(ticket);
+  };
+
+  const handleUpdateTicket = async (ticketId, personId, date, description) => {
+    try {
+      const ticket = tickets.find((t) => t.id === ticketId);
+      const response = await fetch(`${API_URL}/tickets/${ticketId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          personId,
+          date,
+          type: ticket.type,
+          description,
+        }),
+      });
+      const data = await response.json();
+      setTickets((prev) =>
+        prev.map((t) => (t.id === ticketId ? { ...t, ...data } : t))
+      );
+      setEditingTicket(null);
+    } catch (error) {
+      console.error("Error updating ticket:", error);
     }
   };
 
@@ -174,6 +218,8 @@ export default function App() {
                 moveTicket={moveTicket}
                 onScrollEnd={loadMoreDays}
                 updateTicketType={updateTicketType}
+                onEditTicket={handleEditTicket}
+                onDeleteTicket={deleteTicket}
               />
             ))}
           </div>
@@ -182,6 +228,8 @@ export default function App() {
               tickets={waitingTickets}
               moveTicket={moveTicket}
               updateTicketType={updateTicketType}
+              onEditTicket={handleEditTicket}
+              onDeleteTicket={deleteTicket}
             />
           </div>
           <button
@@ -195,6 +243,23 @@ export default function App() {
           </button>
         </DndProvider>
       </div>
+
+      <Modal
+        isOpen={editingTicket !== null}
+        onClose={() => setEditingTicket(null)}
+        title="Modifier le ticket"
+      >
+        {editingTicket && (
+          <TicketManager
+            people={people}
+            initialTicket={editingTicket}
+            onSubmit={(personId, date, description) =>
+              handleUpdateTicket(editingTicket.id, personId, date, description)
+            }
+            closeModal={() => setEditingTicket(null)}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

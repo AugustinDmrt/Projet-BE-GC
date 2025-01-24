@@ -1,20 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WAITING_ZONE_DATE } from "../App/App";
 
-export default function TicketManager({ people, addTicket, closeModal }) {
-  const [newTicket, setNewTicket] = useState({
+export default function TicketManager({
+  people,
+  addTicket,
+  closeModal,
+  initialTicket,
+  onSubmit,
+}) {
+  const [ticket, setTicket] = useState({
     personId: "",
     date: "",
     description: "",
   });
 
+  useEffect(() => {
+    if (initialTicket) {
+      setTicket({
+        personId:
+          initialTicket.personId === "waiting" ? "" : initialTicket.personId,
+        date:
+          initialTicket.date === WAITING_ZONE_DATE ? "" : initialTicket.date,
+        description: initialTicket.description,
+      });
+    }
+  }, [initialTicket]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newTicket.description.trim()) {
-      const personId = newTicket.personId || "waiting";
-      const date = newTicket.date || WAITING_ZONE_DATE;
-      addTicket(personId, date, newTicket.description.trim());
-      setNewTicket({ personId: "", date: "", description: "" });
+    if (ticket.description.trim()) {
+      if (initialTicket) {
+        onSubmit(
+          ticket.personId || "waiting",
+          ticket.date || WAITING_ZONE_DATE,
+          ticket.description.trim()
+        );
+      } else {
+        addTicket(ticket.personId, ticket.date, ticket.description.trim());
+      }
+      setTicket({ personId: "", date: "", description: "" });
       closeModal();
     }
   };
@@ -23,10 +47,8 @@ export default function TicketManager({ people, addTicket, closeModal }) {
     <div className="ticket-manager">
       <form onSubmit={handleSubmit}>
         <select
-          value={newTicket.personId}
-          onChange={(e) =>
-            setNewTicket({ ...newTicket, personId: e.target.value })
-          }
+          value={ticket.personId}
+          onChange={(e) => setTicket({ ...ticket, personId: e.target.value })}
           className="modal-input"
         >
           <option value="">Zone d'attente</option>
@@ -36,28 +58,26 @@ export default function TicketManager({ people, addTicket, closeModal }) {
             </option>
           ))}
         </select>
-        {newTicket.personId && (
+        {ticket.personId && (
           <input
             type="date"
-            value={newTicket.date}
-            onChange={(e) =>
-              setNewTicket({ ...newTicket, date: e.target.value })
-            }
+            value={ticket.date}
+            onChange={(e) => setTicket({ ...ticket, date: e.target.value })}
             className="modal-input"
           />
         )}
         <input
           type="text"
-          value={newTicket.description}
+          value={ticket.description}
           onChange={(e) =>
-            setNewTicket({ ...newTicket, description: e.target.value })
+            setTicket({ ...ticket, description: e.target.value })
           }
           placeholder="Description du ticket"
           required
           className="modal-input"
         />
         <button type="submit" className="modal-button">
-          Ajouter
+          {initialTicket ? "Modifier" : "Ajouter"}
         </button>
       </form>
     </div>

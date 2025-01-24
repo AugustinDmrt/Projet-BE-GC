@@ -66,20 +66,27 @@
   padding: 2rem;
   border-radius: 8px;
   min-width: 400px;
-  max-width: 90%;
+  max-width: 600px;
+  width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
 }
 
 .modal-header h2 {
   margin: 0;
+  font-size: 1.5rem;
+  color: #333;
 }
 
 .modal-close {
@@ -88,6 +95,12 @@
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #333;
 }
 
 .modal-body {
@@ -96,20 +109,31 @@
 
 .modal-input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   margin-bottom: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 .modal-button {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
 .modal-button:hover {
@@ -426,4 +450,49 @@
   background-size: 10px 10px;
   pointer-events: none;
   opacity: 0.3;
+}
+
+/* Ajout/Modification des styles des menus */
+.action-menu,
+.type-menu {
+  position: fixed;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 150px;
+  padding: 4px 0;
+}
+
+.action-menu-item,
+.type-menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.action-menu-item:hover,
+.type-menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+.action-menu-item.delete {
+  color: #dc3545;
+}
+
+.action-menu-item.delete:hover {
+  background-color: #fff5f5;
+}
+
+.type-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
 }

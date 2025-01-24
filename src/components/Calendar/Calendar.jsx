@@ -19,6 +19,8 @@ export default function Calendar({
   moveTicket,
   onScrollEnd,
   updateTicketType,
+  onEditTicket,
+  onDeleteTicket,
 }) {
   const [days, setDays] = useState([]);
   const calendarRef = useRef(null);
@@ -114,6 +116,8 @@ export default function Calendar({
             key={ticket.id}
             ticket={ticket}
             updateTicketType={updateTicketType}
+            onEdit={onEditTicket}
+            onDelete={onDeleteTicket}
           />
         ))}
       </div>
